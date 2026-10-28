@@ -1,28 +1,18 @@
-import secrets
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.contrib.auth.models import User
 
-# Tabla de niveles de natación
 class Nivel(models.Model):
-    orden = models.PositiveSmallIntegerField(unique=True)
-    nombre = models.CharField(max_length=40)
-    descripcion = models.CharField(max_length=120, blank=True, null=True)
-
-    class Meta:
-        managed = False  # Django no crea ni modifica esta tabla, ya existe en MySQL
-        db_table = 'nivel'
-        ordering = ['orden']
+    nombre = models.CharField(max_length=50)
 
     def __str__(self):
         return self.nombre
 
-# Tabla de nadadores/alumnos
 class Alumno(models.Model):
     codigo = models.CharField(max_length=11, unique=True, editable=False)
     nombre = models.CharField(max_length=60)
     apellidos = models.CharField(max_length=80)
     fecha_nacimiento = models.DateField()
-    nivel = models.ForeignKey(Nivel, on_delete=models.PROTECT) # Relación con Nivel
+    nivel = models.ForeignKey(Nivel, on_delete=models.PROTECT)
     tutor_nombre = models.CharField(max_length=100)
     tutor_telefono = models.CharField(max_length=15)
     fecha_alta = models.DateField(auto_now_add=True)
@@ -33,7 +23,6 @@ class Alumno(models.Model):
         db_table = 'alumno'
         ordering = ['apellidos', 'nombre']
 
-    # Al guardar un alumno nuevo, le genera un código único como 'AQ-7F3A91C2'
     def save(self, *args, **kwargs):
         if not self.codigo:
             self.codigo = 'AQ-' + secrets.token_hex(4).upper()
@@ -41,54 +30,30 @@ class Alumno(models.Model):
 
     def __str__(self):
         return f'{self.nombre} {self.apellidos}'
+    def __str__(self):
+        return f"{self.nombre} {self.apellidos}"
 
-# Tabla para registrar asistencias
 class Asistencia(models.Model):
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='asistencias')
-    fecha = models.DateField()
-    registrada_por = models.CharField(max_length=150)
+    fecha = models.DateField(auto_now_add=True)
 
-    class Meta:
-        managed = False
-        db_table = 'asistencia'
-        unique_together = ('alumno', 'fecha')
+    def __str__(self):
+        return f"{self.alumno} - {self.fecha}"
 
-# Tabla para guardar tiempos de pruebas
 class Tiempo(models.Model):
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='tiempos')
-    prueba = models.CharField(max_length=30)
-    segundos = models.DecimalField(max_digits=6, decimal_places=2)
-    fecha = models.DateField()
+    prueba = models.CharField(max_length=100)
+    segundos = models.FloatField()
+    fecha = models.DateField(auto_now_add=True)
 
-    class Meta:
-        managed = False
-        db_table = 'tiempo'
+    def __str__(self):
+        return f"{self.alumno} - {self.prueba}: {self.segundos}s"
 
-# Tabla para evaluaciones de los alumnos
-class Evaluacion(models.Model):
-    AREAS = [
-        ('Tecnica', 'Técnica'),
-        ('Seguridad acuatica', 'Seguridad acuática'),
-        ('Desarrollo humano', 'Desarrollo humano'),
-    ]
-    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='evaluaciones')
-    fecha = models.DateField()
-    area = models.CharField(max_length=20, choices=AREAS)
-    puntaje = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(10)]) # Nota entre 1 y 10
-    observacion = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'evaluacion'
-
-# Tabla para registrar incidentes médicos
 class Incidente(models.Model):
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, related_name='incidentes')
-    fecha = models.DateField()
-    descripcion = models.CharField(max_length=255)
-    accion_tomada = models.CharField(max_length=255)
+    fecha = models.DateField(auto_now_add=True)
+    descripcion = models.TextField()
+    accion_tomada = models.TextField()
 
-    class Meta:
-        managed = False
-        db_table = 'incidente'
+    def __str__(self):
+        return f"Incidente {self.alumno} ({self.fecha})"
