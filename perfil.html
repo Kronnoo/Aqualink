@@ -1,0 +1,47 @@
+{% extends 'nadadores/base.html' %}
+{% block contenido %}
+<section class="perfil">
+  <h2>{{ alumno.nombre }} {{ alumno.apellidos }}</h2>
+  <p><strong>Código:</strong> {{ alumno.codigo }}</p>
+  <p><strong>Nivel:</strong> {{ alumno.nivel.nombre }}</p>
+  <p><strong>Fecha de nacimiento:</strong> {{ alumno.fecha_nacimiento|date:"d/m/Y" }}</p>
+  <p><strong>Tutor:</strong> {{ alumno.tutor_nombre }} · {{ alumno.tutor_telefono }}</p>
+  <p><strong>Asistencias:</strong> {{ total_asistencias }}</p>
+</section>
+
+<!-- Sección para los últimos tiempos registrados -->
+<section>
+  <h3>Últimos tiempos</h3>
+  <ul>
+    {% for t in tiempos %}
+      <li>{{ t.fecha|date:"d/m/Y" }} · {{ t.prueba }}: {{ t.segundos }} s</li>
+    {% empty %}
+      <li>Sin tiempos registrados.</li>
+    {% endfor %}
+  </ul>
+</section>
+
+<!-- Sección de evaluaciones -->
+<section>
+  <h3>Evaluaciones</h3>
+  <ul>
+    {% for e in evaluaciones %}
+      <li>{{ e.fecha|date:"d/m/Y" }} · {{ e.get_area_display }}: {{ e.puntaje }}/10 — {{ e.observacion }}</li>
+    {% empty %}
+      <li>Sin evaluaciones.</li>
+    {% endfor %}
+  </ul>
+</section>
+
+<!-- Sección de incidentes médicos (confidencial) -->
+<section class="privado">
+  <h3>Incidentes médicos (confidencial)</h3>
+  <ul>
+    {% for i in incidentes %}
+      <li>{{ i.fecha|date:"d/m/Y" }} · {{ i.descripcion }}. Acción: {{ i.accion_tomada }}</li>
+    {% empty %}
+      <li>Sin incidentes.</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}x|

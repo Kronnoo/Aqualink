@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block titulo %}AquaLink{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'nadadores/style.css' %}">
+</head>
+<body>
+  <header>
+    <h1>AquaLink</h1>
+    <!-- Muestra el menú solo si el usuario inició sesión -->
+    {% if user.is_authenticated %}
+    <nav>
+      <a href="{% url 'inicio' %}">Inicio</a>
+      <a href="{% url 'registrar_nadador' %}">Registrar nadador</a>
+      <a href="{% url 'panel' %}">Panel</a>
+      <!-- Enlace visible solo para el superusuario -->
+      {% if user.is_superuser %}
+        <a href="{% url 'registrar_usuario' %}">Nuevo usuario</a>
+      {% endif %}
+      <!-- Botón para cerrar sesión mediante POST -->
+      <form method="post" action="{% url 'logout' %}" class="form-salir">
+        {% csrf_token %}
+        <button type="submit">Salir ({{ user.username }})</button>
+      </form>
+    </nav>
+    {% endif %}
+  </header>
+
+  <main>
+    <!-- Muestra mensajes de éxito o aviso -->
+    {% for mensaje in messages %}
+      <p class="mensaje-ok">{{ mensaje }}</p>
+    {% endfor %}
+
+    <!-- Bloque sustituible por cada página -->
+    {% block contenido %}{% endblock %}
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Escuela de natación ABGALES · Sistema AquaLink · CECyTEM Metepec II</p>
+  </footer>
+</body>
+</html>

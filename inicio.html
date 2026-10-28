@@ -1,0 +1,32 @@
+{% extends 'nadadores/base.html' %}
+{% block contenido %}
+<section>
+  <h2>Nadadores activos ({{ alumnos|length }})</h2>
+  <!-- Formulario de búsqueda -->
+  <form method="get" class="buscador">
+    <input type="text" name="q" value="{{ busqueda }}" placeholder="Buscar por nombre o apellido">
+    <button type="submit">Buscar</button>
+  </form>
+  <div class="tabla-scroll">
+    <table>
+      <thead>
+        <tr><th>Código</th><th>Nombre</th><th>Nivel</th><th></th></tr>
+      </thead>
+      <tbody>
+        <!-- Recorre cada alumno de la lista -->
+        {% for a in alumnos %}
+        <tr>
+          <td>{{ a.codigo }}</td>
+          <td>{{ a.nombre }} {{ a.apellidos }}</td>
+          <td>{{ a.nivel.nombre }}</td>
+          <td><a href="{% url 'perfil_nadador' a.id %}">Ver perfil</a></td>
+        </tr>
+        {% empty %}
+        <!-- Si la lista está vacía -->
+        <tr><td colspan="4">No hay nadadores que coincidan.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

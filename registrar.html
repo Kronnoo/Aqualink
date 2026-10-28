@@ -1,0 +1,11 @@
+{% extends 'nadadores/base.html' %}
+{% block contenido %}
+<section>
+  <h2>Registrar nadador</h2>
+  <form method="post" class="formulario">
+    {% csrf_token %}
+    {{ form.as_p }} <!-- Renderiza los campos del formulario dentro de párrafos -->
+    <button type="submit">Guardar</button>
+  </form>
+</section>
+{% endblock %}

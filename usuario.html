@@ -1,0 +1,11 @@
+{% extends 'nadadores/base.html' %}
+{% block contenido %}
+<section>
+  <h2>Nueva cuenta de personal</h2>
+  <form method="post" class="formulario">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Guardar</button>
+  </form>
+</section>
+{% endblock %}

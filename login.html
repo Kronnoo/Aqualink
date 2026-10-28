@@ -1,0 +1,19 @@
+{% extends 'nadadores/base.html' %}
+{% block titulo %}Iniciar sesión · AquaLink{% endblock %}
+{% block contenido %}
+<section class="caja-login">
+  <h2>Iniciar sesión</h2>
+  {% if form.errors %}
+    <p class="mensaje-error">Usuario o contraseña incorrectos.</p>
+  {% endif %}
+  <form method="post" class="formulario">
+    {% csrf_token %} <!-- Token de seguridad de Django -->
+    <label for="id_username">Usuario:</label>
+    {{ form.username }}
+    <label for="id_password">Contraseña:</label>
+    {{ form.password }}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit">Entrar</button>
+  </form>
+</section>
+{% endblock %}
